@@ -1,29 +1,45 @@
-# twinkling_stars_claudius
- twinkling stars made by ocaml using claudius as my first step towards diving into ocaml and claudius
- inspiration - https://github.com/claudiusFX/claudius-examples
- 
- # clone this repo :)
+# Twinkling Stars - Claudius  
+A simple twinkling stars animation using OCaml and Claudius—my first step into OCaml graphics programming with Claudius.  
 
-1. Clone Claudius first
+## Inspiration  
+Inspired by the [Claudius Examples Repository](https://github.com/claudiusFX/claudius-examples).  
+
+---
+
+##  Getting Started  
+
+### 1️. Clone Claudius  
+First, clone the Claudius repository:  
 ```bash
-https://github.com/claudiusFX/Claudius.git
+git clone https://github.com/claudiusFX/Claudius.git
 ```
-2. Now follow the command make sure you are Under Claudius Directory
+
+### 2. Build Claudius  
+Navigate to the Claudius directory and build it using `dune`:  
 ```bash
 cd Claudius
 dune build @install
 ```
-3. Clone this project
+
+### 3️. Clone This Project  
+Now, clone this repository:  
 ```bash
-https://github.com/Vanshikaxxa/twinkling_stars_claudius.git
-```
-4. To run
-```bash
-cd (your_project_name)
-dune exec (your_project_name)
+git clone https://github.com/Vanshikaxxa/twinkling_stars_claudius.git
 ```
 
- 
+### 4️. Run the Project  
+Navigate to the project directory and execute it:  
+```bash
+cd twinkling_stars_claudius
+dune exec twinkling_stars_claudius
+```
+
+---
+
+## Screenshots  
 
 
-# screenshots
+---
+
+##  Contribute & Support  
+Feel free to clone, explore, and modify!   
