@@ -36,12 +36,9 @@ dune exec twinkling_stars_claudius
 
 ---
 
-## Screenshots
-[Demo Video](https://github.com/Vanshikaxxa/twinkling_stars_claudius/twinkling_stars.mp4)
+## Demo Video
+[Demo Video](https://github.com/user-attachments/assets/337756e6-8782-4e6c-8326-629ef1b55427)
 
 
 
 ---
-
-##  Contribute & Support  
-Feel free to clone, explore, and modify!   
