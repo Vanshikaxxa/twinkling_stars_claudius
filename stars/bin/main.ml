@@ -1,4 +1,5 @@
 open Claudius
+open Tsdl
 
 type star = {
   x : int;
@@ -19,12 +20,18 @@ let render (_s : Screen.t) (stars : star list) : Primitives.t list =
     Primitives.Pixel ({ x = star.x; y = star.y }, star.brightness)
   ) stars
 
+let render_debug_info () =
+  let fps = 60 in
+  let resolution = "800x600" in
+  Sdl.log "FPS: %d | Resolution: %s" fps resolution  
+
 let tick (_t : int) (s : Screen.t) (prev : Framebuffer.t) (_inputs : Base.KeyCodeSet.t) : Framebuffer.t =
   let buffer = Framebuffer.map (fun _ -> 0) prev in
   let width, height = Screen.dimensions s in
   let stars = generate_stars 100 width height |> twinkle in
   render s stars |> Framebuffer.render buffer;
+  render_debug_info ();
   buffer
 
 let () =
-  Screen.create 640 480 1 (Palette.generate_mono_palette 16) |> Base.run "Twinkling Stars" None tick
+  Screen.create 800 600 1 (Palette.generate_mono_palette 16) |> Base.run "Twinkling Stars" None tick
