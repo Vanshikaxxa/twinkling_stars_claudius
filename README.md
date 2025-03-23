@@ -37,7 +37,7 @@ dune exec twinkling_stars_claudius
 ---
 
 ## Demo Video
-[Demo Video](https://github.com/user-attachments/assets/337756e6-8782-4e6c-8326-629ef1b55427)
+[Demo Video](https://github.com/user-attachments/assets/17ca69fe-a8e5-4763-a725-018aa89d43cb)
 
 
 
