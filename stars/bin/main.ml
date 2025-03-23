@@ -24,6 +24,7 @@ let render (_s : Screen.t) (stars : star list) : Primitives.t list =
 let last_time = ref (Int32.of_int 0)
 let fps = ref 0
 
+(* Calculating FPS *)
 let render_debug_info (s : Screen.t) () =
   let now = Sdl.get_ticks () in
   let elapsed = Int32.sub now !last_time in
@@ -41,4 +42,4 @@ let tick (_t : int) (s : Screen.t) (prev : Framebuffer.t) (_inputs : Base.KeyCod
   buffer
 
 let () =
-  Screen.create 800 640 1 (Palette.generate_mono_palette 16) |> Base.run "Twinkling Stars" None tick
+  Screen.create 400 400 1 (Palette.generate_mono_palette 16) |> Base.run "Twinkling Stars" None tick
