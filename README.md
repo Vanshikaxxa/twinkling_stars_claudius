@@ -19,6 +19,10 @@ Navigate to the Claudius directory and build it using `dune`:
 ```bash
 cd Claudius
 dune build @install
+opam install \
+  dune \
+  tsdl \
+  tsdl-ttf \
 ```
 
 ### 3️. Clone This Project  
