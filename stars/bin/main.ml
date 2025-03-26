@@ -38,53 +38,65 @@ let render (_stars : star list) : Primitives.t list =
   let star_primitives = 
     List.map (fun star -> Primitives.Pixel ({ x = star.x; y = star.y }, star.brightness)) _stars
   in
+  (* Add FPS text as simple pixel art *)
   let fps_text = Printf.sprintf "FPS: %d" !fps_counter in
   let text_primitives = 
     let base_x = 2 in
     let base_y = 2 in
     let draw_char x y c acc = 
       (* Very simple 5x7 font rendering for demo purposes *)
+      (* Now drawing each pixel at 2x scale *)
+      let draw_pixel px py b acc =
+        (* Draw 4 pixels for each original pixel to create 2x scale *)
+        let pixels = [
+          (px, py, b); (px+1, py, b);
+          (px, py+1, b); (px+1, py+1, b)
+        ] in
+        List.fold_left (fun acc (px, py, b) -> 
+          Primitives.Pixel ({ x = px; y = py }, b) :: acc
+        ) acc pixels
+      in
       match c with
       | 'F' -> 
         let pixels = [
-          (x, y, 15); (x+1, y, 15); (x+2, y, 15); (x+3, y, 15);
-          (x, y+1, 15);
-          (x, y+2, 15); (x+1, y+2, 15); (x+2, y+2, 15);
-          (x, y+3, 15);
-          (x, y+4, 15)
+          (x, y); (x+1, y); (x+2, y); (x+3, y);
+          (x, y+1);
+          (x, y+2); (x+1, y+2); (x+2, y+2);
+          (x, y+3);
+          (x, y+4)
         ] in
-        List.fold_left (fun acc (px, py, b) -> 
-          Primitives.Pixel ({ x = px; y = py }, b) :: acc
+        List.fold_left (fun acc (px, py) -> 
+          draw_pixel (px*2) (py*2) 15 acc
         ) acc pixels
       | 'P' ->
         let pixels = [
-          (x, y, 15); (x+1, y, 15); (x+2, y, 15); (x+3, y, 15);
-          (x, y+1, 15); (x+3, y+1, 15);
-          (x, y+2, 15); (x+1, y+2, 15); (x+2, y+2, 15); (x+3, y+2, 15);
-          (x, y+3, 15);
-          (x, y+4, 15)
+          (x, y); (x+1, y); (x+2, y); (x+3, y);
+          (x, y+1); (x+3, y+1);
+          (x, y+2); (x+1, y+2); (x+2, y+2); (x+3, y+2);
+          (x, y+3);
+          (x, y+4)
         ] in
-        List.fold_left (fun acc (px, py, b) -> 
-          Primitives.Pixel ({ x = px; y = py }, b) :: acc
+        List.fold_left (fun acc (px, py) -> 
+          draw_pixel (px*2) (py*2) 15 acc
         ) acc pixels
       | 'S' ->
         let pixels = [
-          (x, y, 15); (x+1, y, 15); (x+2, y, 15); (x+3, y, 15);
-          (x, y+1, 15);
-          (x, y+2, 15); (x+1, y+2, 15); (x+2, y+2, 15); (x+3, y+2, 15);
-          (x+3, y+3, 15);
-          (x, y+4, 15); (x+1, y+4, 15); (x+2, y+4, 15); (x+3, y+4, 15)
+          (x, y); (x+1, y); (x+2, y); (x+3, y);
+          (x, y+1);
+          (x, y+2); (x+1, y+2); (x+2, y+2); (x+3, y+2);
+          (x+3, y+3);
+          (x, y+4); (x+1, y+4); (x+2, y+4); (x+3, y+4)
         ] in
-        List.fold_left (fun acc (px, py, b) -> 
-          Primitives.Pixel ({ x = px; y = py }, b) :: acc
+        List.fold_left (fun acc (px, py) -> 
+          draw_pixel (px*2) (py*2) 15 acc
         ) acc pixels
       | ':' ->
         let pixels = [
-          (x+1, y+1, 15);
-          (x+1, y+3, 15)
+          (x+1, y+1);
+          (x+1, y+3)
         ] in
-        List.fold_left (fun acc (px, py, b) -> 
-          Primitives.Pixel ({ x = px; y = py }, b) :: acc
+        List.fold_left (fun acc (px, py) -> 
+          draw_pixel (px*2) (py*2) 15 acc
         ) acc pixels
       | '0'..'9' as digit ->
         let n = Char.code digit - Char.code '0' in
@@ -103,20 +115,20 @@ let render (_stars : star list) : Primitives.t list =
           | _ -> []
         in
         List.fold_left (fun acc (dx, dy) -> 
-          Primitives.Pixel ({ x = x + dx; y = y + dy }, 15) :: acc
+          draw_pixel ((x+dx)*2) ((y+dy)*2) 15 acc
         ) acc segments
-      | _ -> acc 
+      | _ -> acc (* Skip unknown characters *)
     in
     let rec draw_string x y chars acc =
       match chars with
       | [] -> acc
       | c :: cs -> 
-        let new_acc = draw_char x y c acc in
-        draw_string (x + 5) y cs new_acc
+        let new_acc = draw_char (x/2) (y/2) c acc in
+        draw_string (x + 10) y cs new_acc  (* Increased spacing between characters *)
     in
-    draw_string base_x base_y (List.of_seq (String.to_seq fps_text)) []
+    draw_string (base_x*2) (base_y*2) (List.of_seq (String.to_seq fps_text)) []
   in
-  star_primitives @ text_primitives
+    star_primitives @ text_primitives
 
 let tick (_t : int) (s : Screen.t) (prev : Framebuffer.t) (_inputs : Base.KeyCodeSet.t) : Framebuffer.t =
   let buffer = Framebuffer.map (fun _ -> 0) prev in
