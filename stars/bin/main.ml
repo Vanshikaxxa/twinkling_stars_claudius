@@ -1,6 +1,4 @@
 open Claudius
-open Tsdl
-open Tsdl_ttf
 
 type star = {
   x : int;
@@ -20,15 +18,15 @@ let twinkle stars =
   ) stars
 
 (* FPS Calculation *)
-let last_time = ref (Sdl.get_ticks ())
+let last_time = ref (0.0)
 let frame_count = ref 0
 let fps_counter = ref 0
 
 let calculate_fps () =
-  let now = Sdl.get_ticks () in
-  let elapsed = Int32.sub now !last_time in
+  let now = Unix.gettimeofday () in
+  let elapsed = now -. !last_time in
   frame_count := !frame_count + 1;
-  if elapsed >= 1000l then (
+  if elapsed >= 1.0 then (
     fps_counter := !frame_count;
     frame_count := 0;
     last_time := now
@@ -140,33 +138,15 @@ let tick (_t : int) (s : Screen.t) (prev : Framebuffer.t) (_inputs : Base.KeyCod
 
 let () =
   Random.self_init ();
-  match Sdl.init Sdl.Init.video with
-  | Error (`Msg e) -> Sdl.log "SDL init failed: %s" e; exit 1
-  | Ok () -> 
-    match Ttf.init () with
-    | Error (`Msg e) -> Sdl.log "TTF init failed: %s" e; Sdl.quit (); exit 1
-    | Ok () -> 
-      match Sdl.create_window ~w:400 ~h:400 "Twinkling Stars" Sdl.Window.opengl with
-      | Error (`Msg e) -> 
-        Sdl.log "Window creation failed: %s" e;
-        Ttf.quit (); Sdl.quit (); exit 1
-      | Ok window ->
-        match Sdl.create_renderer window ~flags:Sdl.Renderer.accelerated with
-        | Error (`Msg e) -> 
-          Sdl.log "Renderer creation failed: %s" e;
-          Sdl.destroy_window window;
-          Ttf.quit (); Sdl.quit (); exit 1
-        | Ok renderer ->
-          let screen = Screen.create 400 400 1 (Palette.generate_mono_palette 16) in
-          let tick_wrapper t s p i = 
-            let buffer = tick t s p i in
-            ignore (Sdl.set_render_draw_color renderer 0 0 0 255);
-            ignore (Sdl.render_clear renderer);
-            ignore (Sdl.render_present renderer);
-            buffer
-          in
-          Base.run "Twinkling Stars" None tick_wrapper screen;
-          Sdl.destroy_renderer renderer;
-          Sdl.destroy_window window;
-          Ttf.quit ();
-          Sdl.quit ()
+  let screen = Screen.create 400 400 1 (Palette.generate_mono_palette 16) in
+  Base.run "Twinkling Stars" None tick screen
+
+
+
+
+
+
+
+
+
+  
