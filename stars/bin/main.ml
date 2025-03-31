@@ -1,10 +1,13 @@
-open Claudius
-
 type star = {
   x : int;
   y : int;
   brightness : int;
 }
+
+let stars = ref []
+let num_stars = 100
+let last_width = ref 0
+let last_height = ref 0
 
 let generate_stars num_stars width height =
   let rand_brightness () = 1 + Random.int 15 in
@@ -200,22 +203,38 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
 
 let f_key = Key.F
 
-let num_stars = 100
-
-
-
 let tick (_t : int) (s : Screen.t) (prev : Framebuffer.t) (inputs : Base.KeyCodeSet.t) : Framebuffer.t =
   let buffer = Framebuffer.map (fun _ -> 0) prev in
   let width, height = Screen.dimensions s in
-  let stars = generate_stars num_stars width height |> twinkle in
+  
+  let size_changed = !last_width != width || !last_height != height in
+  
+  last_width := width;
+  last_height := height;
+  
+  if size_changed || !stars = [] || List.length !stars != num_stars then (
+    stars := generate_stars num_stars width height
+  ) else (
+    stars := twinkle !stars;
+
+    stars := List.map (fun star ->
+      { star with
+        x = min (max star.x 0) (width - 1);
+        y = min (max star.y 0) (height - 1)
+      }
+    ) !stars
+  );
+  
   calculate_fps ();
   
   let show_stats = Base.KeyCodeSet.mem f_key inputs in
   
-  render stars show_stats width height |> Framebuffer.render buffer;
+  render !stars show_stats width height |> Framebuffer.render buffer;
   buffer
 
 let () =
   Random.self_init ();
-  let screen = Screen.create 400 400 1 (Palette.generate_mono_palette 16) in
+  last_width := 400;
+  last_height := 400;
+  let screen = Screen.create ~resizable:true 400 400 1 (Palette.generate_mono_palette 16) in
   Base.run "Twinkling Stars" None tick screen
