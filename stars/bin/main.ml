@@ -36,7 +36,7 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
   let star_primitives = 
     List.map (fun star -> Primitives.Pixel ({ x = star.x; y = star.y }, star.brightness)) _stars
   in
-  (* Add stats only when show_stats is true *)
+
   if show_stats then
     let fps_text = Printf.sprintf "FPS: %d" !fps_counter in
     let dots_text = Printf.sprintf "DOTS: %d" (List.length _stars) in
@@ -45,10 +45,9 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
       let base_x = 2 in
       let base_y = 2 in
       let draw_char x y c acc = 
-        (* Very simple 5x7 font rendering for demo purposes *)
-        (* Now drawing each pixel at 2x scale *)
+
         let draw_pixel px py b acc =
-          (* Draw 4 pixels for each original pixel to create 2x scale *)
+
           let pixels = [
             (px, py, b); (px+1, py, b);
             (px, py+1, b); (px+1, py+1, b)
@@ -167,7 +166,7 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
           ) acc pixels
         | '0'..'9' as digit ->
           let n = Char.code digit - Char.code '0' in
-          (* Simple digit rendering *)
+
           let segments = match n with
             | 0 -> [(0,0);(1,0);(2,0); (0,1);(2,1); (0,2);(2,2); (0,3);(2,3); (0,4);(1,4);(2,4)]
             | 1 -> [(2,0); (2,1); (2,2); (2,3); (2,4)]
@@ -184,19 +183,17 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
           List.fold_left (fun acc (dx, dy) -> 
             draw_pixel ((x+dx)*2) ((y+dy)*2) 15 acc
           ) acc segments
-        | _ -> acc (* Skip unknown characters *)
+        | _ -> acc 
       in
       let rec draw_string x y chars acc =
         match chars with
         | [] -> acc
         | c :: cs -> 
           let new_acc = draw_char (x/2) (y/2) c acc in
-          draw_string (x + 10) y cs new_acc  (* Increased spacing between characters *)
+          draw_string (x + 10) y cs new_acc  
       in
       let fps_primitives = draw_string (base_x*2) (base_y*2) (List.of_seq (String.to_seq fps_text)) [] in
-      (* Draw dots count on the next line - add vertical offset *)
       let dots_primitives = draw_string (base_x*2) ((base_y + 14)*2) (List.of_seq (String.to_seq dots_text)) [] in
-      (* Draw resolution on the third line *)
       let res_primitives = draw_string (base_x*2) ((base_y + 28)*2) (List.of_seq (String.to_seq res_text)) [] in
       fps_primitives @ dots_primitives @ res_primitives
     in
@@ -204,12 +201,9 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
   else
     star_primitives
 
-(* Key code for letter 'F' - standard ASCII value *)
 let f_key = Key.F
 
-(* Variable to store the count of stars *)
 let num_stars = 100
-
 
 
 let tick (_t : int) (s : Screen.t) (prev : Framebuffer.t) (inputs : Base.KeyCodeSet.t) : Framebuffer.t =
@@ -218,7 +212,6 @@ let tick (_t : int) (s : Screen.t) (prev : Framebuffer.t) (inputs : Base.KeyCode
   let stars = generate_stars num_stars width height |> twinkle in
   calculate_fps ();
   
-  (* Check if 'F' key is being pressed *)
   let show_stats = Base.KeyCodeSet.mem f_key inputs in
   
   render stars show_stats width height |> Framebuffer.render buffer;
