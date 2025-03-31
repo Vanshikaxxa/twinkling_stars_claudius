@@ -36,7 +36,6 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
   let star_primitives = 
     List.map (fun star -> Primitives.Pixel ({ x = star.x; y = star.y }, star.brightness)) _stars
   in
-
   if show_stats then
     let fps_text = Printf.sprintf "FPS: %d" !fps_counter in
     let dots_text = Printf.sprintf "DOTS: %d" (List.length _stars) in
@@ -47,7 +46,6 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
       let draw_char x y c acc = 
 
         let draw_pixel px py b acc =
-
           let pixels = [
             (px, py, b); (px+1, py, b);
             (px, py+1, b); (px+1, py+1, b)
@@ -166,7 +164,6 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
           ) acc pixels
         | '0'..'9' as digit ->
           let n = Char.code digit - Char.code '0' in
-
           let segments = match n with
             | 0 -> [(0,0);(1,0);(2,0); (0,1);(2,1); (0,2);(2,2); (0,3);(2,3); (0,4);(1,4);(2,4)]
             | 1 -> [(2,0); (2,1); (2,2); (2,3); (2,4)]
@@ -190,7 +187,7 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
         | [] -> acc
         | c :: cs -> 
           let new_acc = draw_char (x/2) (y/2) c acc in
-          draw_string (x + 10) y cs new_acc  
+          draw_string (x + 10) y cs new_acc 
       in
       let fps_primitives = draw_string (base_x*2) (base_y*2) (List.of_seq (String.to_seq fps_text)) [] in
       let dots_primitives = draw_string (base_x*2) ((base_y + 14)*2) (List.of_seq (String.to_seq dots_text)) [] in
@@ -204,6 +201,7 @@ let render (_stars : star list) (show_stats : bool) (width : int) (height : int)
 let f_key = Key.F
 
 let num_stars = 100
+
 
 
 let tick (_t : int) (s : Screen.t) (prev : Framebuffer.t) (inputs : Base.KeyCodeSet.t) : Framebuffer.t =
